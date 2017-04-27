@@ -3,33 +3,33 @@ from django.db import models
 # Create your models here.
 
 class DAGR(models.Model):
-    Name = models.CharField(_("Name"))
-    Author = models.CharField(_("Author"))
-    CreationTime = models.DateTimeField(_("Creation Time"))
-    LastModified = models.DateTimeField(_("Last Modified"))
-    Size = models.CharField(_("Size"))
-    DeletionTime = models.DateTimeField(_("Deletion Time"))
-    Has_Kids = models.BooleanField(("Has Kids"))
+    Name = models.CharField("Name",max_length = 50)
+    Author = models.CharField("Author",max_length = 50)
+    CreationTime = models.DateTimeField("Creation Time")
+    LastModified = models.DateTimeField("Last Modified")
+    Size = models.CharField("Size",max_length = 50)
+    DeletionTime = models.DateTimeField("Deletion Time")
+    HasKids = models.BooleanField("Has Kids")
 
-class Category(models.models):
-    Name = models.CharField(_("Name"))
-    ParentCategory = models.ForeignKey(_(Category))
+class Category(models.Model):
+    Name = models.CharField("Name",max_length = 50)
+    ParentCategory = models.ForeignKey("self")
 
 class Document(models.Model):
-    Name = models.CharField(_("Name"))
-    Author = models.CharField(_("Author"))
-    CreationTime = models.DateTimeField(_("Creation Time"))
-    LastModified = models.DateTimeField(_("Last Modified"))
-    Size  = models.IntegerField(_("Size"))
-    Links = models.CharField(_("Link"))
-    Type = models.CharField(_("Type"))
-    Owner = models.ForeignKey(_(DAGR))
+    Name = models.CharField("Name",max_length = 50)
+    Author = models.CharField("Author",max_length = 50)
+    CreationTime = models.DateTimeField("Creation Time")
+    LastModified = models.DateTimeField("Last Modified")
+    Size  = models.IntegerField("Size")
+    Links = models.FileField(upload_to = 'files/')
+    Type = models.CharField("Type",max_length = 50)
+    Owner = models.ForeignKey(DAGR)
 
-class DAGR_Category(models.Model):
-    Category =  models.ForeignKey(_(Category))
-    DAGR =  models.ForeignKey(_(DAGR))
+class DAGRCategory(models.Model):
+    Category =  models.ForeignKey(Category)
+    DAGR =  models.ForeignKey(DAGR)
 
 
-class DAGR_Children(models.Model):
-    Parent =  models.ForeignKey(_(DAGR))
-    Children  =  models.ForeignKey(_(DAGR))
+class DAGRChildren(models.Model):
+    Parent =  models.ForeignKey(DAGR,related_name='Parent')
+    Children  =  models.ForeignKey(DAGR,related_name='Child')
