@@ -1,0 +1,15 @@
+
+{% load django_tables2 %}
+
+	 	{% autoescape on %}
+	    {% for field, val in object %}
+	    	<!-- Assuming we don't need to display these fields... -->
+				<ul>
+					{% if val != Null %}
+	    		<li>{{ field.verbose_name }} : {{ val | linebreaksbr }} </li></br>
+	    		{% endif %}
+				</ul>
+
+
+	    {% endfor %}
+		{% endautoescape %}

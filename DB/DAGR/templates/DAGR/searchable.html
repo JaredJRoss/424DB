@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/static/django_tables2/themes/paleblue/css/screen.css" />
+
+{% include 'bootstrap3/layout/help_text_and_errors.html' %}
+
+{% load render_table from django_tables2 %}
+
+{% load crispy_forms_tags %}
+{% load bootstrap3 %}
+
+{% crispy filter.form filter.form.helper %}
+
+{% render_table table %}

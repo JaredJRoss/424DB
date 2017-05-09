@@ -4,15 +4,45 @@ from django.core.files.storage import FileSystemStorage
 from .forms import *
 from .models import *
 from django.views.generic.edit import FormView
+from .filters import *
 from .forms import FileFieldForm
 import datetime
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
 import re
+from django.views import generic
 from watson import search as watson
+from .tables import *
+from django_tables2 import RequestConfig
+from django_tables2 import SingleTableView
+from django.views.generic import ListView,TemplateView,UpdateView
+
+
 
 def basic_search(request):
     return render(request, 'DAGR/basic_search.html', {})
+
+def tables(request):
+    DAGR_table = DAGRTable(DAGR.objects.all())
+    RequestConfig(request).configure(DAGR_table)
+
+    return render(request,'DAGR/tables.html',
+        {'DAGR':DAGR_table})
+
+class DAGRListView(TemplateView):
+    template_name='DAGR/searchable.html'
+    def get_queryset(self,**kwargs):
+        return DAGR.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(DAGRListView, self).get_context_data(**kwargs)
+        filter = DAGRListFilter(self.request.GET, queryset=self.get_queryset(**kwargs))
+        filter.form.helper = DAGRListFormHelper()
+        table = DAGRTable(filter.qs)
+        RequestConfig(self.request).configure(table)
+        context['filter'] = filter
+        context['table'] = table
+        return context
 
 def model_form_upload(request):
     if request.method == 'POST':
@@ -26,7 +56,7 @@ def model_form_upload(request):
             if not form.cleaned_data.get('Name'):
                 name  = form.cleaned_data.get('Links').name.split('/')[-1].split('.')[0]
             else:
-                name = form.cleaned_data.get(Name)
+                name = form.cleaned_data.get('Name')
             obj.Name = name
             obj.FileName = form.cleaned_data.get('Links').name.split('/')[-1]
             New_DAGR = DAGR(Name = name, Author = form.cleaned_data.get('Author'), \
@@ -91,3 +121,11 @@ def add_cat(request):
 
 
     return render(request, 'DAGR/add_new.html', context)
+
+class DAGR_Detailview(generic.DetailView):
+    model = DAGR
+    template_name='DAGR/detail.html'
+
+class DAGR_Update(UpdateView):
+    model = DAGR
+    fields = ['Name','Author','Kids']

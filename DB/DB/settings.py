@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'DAGR',
     'watson',
+    'django_tables2',
+    'crispy_forms',
+    'bootstrap3',
 ]
 
 MIDDLEWARE = [
