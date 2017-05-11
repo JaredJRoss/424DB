@@ -63,6 +63,18 @@ def model_form_upload(request):
         'form': form
     })
 
+def url_upload(request):
+    form = URLForm(request.POST or None);
+    name = "URL";
+    context = {
+        'form' : form,
+        'name' : name
+    }
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('/DAGR/')
+
+    return render(request, 'DAGR/add_new.html', context)
 def find_duplicates(request):
     unique_fields = ['field_1', 'field_n']
     duplicates = (MyModel.objects.values(*unique_fields)

@@ -8,7 +8,7 @@ from crispy_forms.bootstrap import InlineField, FormActions, StrictButton
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ('Links','Name','Author')
+        fields = ('Links','Name','Author','Owner','Description')
 
 
 class FileFieldForm(forms.Form):
@@ -18,6 +18,11 @@ class FileFieldForm(forms.Form):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
+        fields = '__all__'
+
+class URLForm(forms.ModelForm):
+    class Meta:
+        model = URL
         fields = '__all__'
 
 class DAGRListFormHelper(FormHelper):

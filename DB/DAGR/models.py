@@ -34,7 +34,7 @@ class DAGR(models.Model):
                 yield(field,value)
 
     Name = models.CharField("Name",max_length = 50)
-    Description = models.CharField("Name",max_length = 500)
+    Description = models.CharField("Description",max_length = 500,blank= True,null = True)
     Author = models.CharField("Author",max_length = 50)
     CreationTime = models.DateTimeField("Creation Time")
     LastModified = models.DateTimeField("Last Modified", blank = True,null=True)
@@ -55,18 +55,18 @@ class Document(models.Model):
     FileName = models.CharField("File Name",max_length = 50, unique = True)
     Type = models.CharField("Type",max_length = 50)
     Owner = models.ForeignKey(DAGR, blank = True,null=True)
-    Description = models.CharField("Name",max_length = 100)
+    Description = models.CharField("Description",max_length = 100)
+
 
 class URL(models.Model):
     def __str__(self):
         return self.Name
-        
+
     Name = models.CharField("Name",max_length = 50, blank = True,null=True)
     Type = models.CharField("Type",max_length = 50)
-    Description = models.CharField("Name",max_length = 100)
-    Link = models.CharField("Name",max_length = 200)
+    Description = models.CharField("Description",max_length = 100)
+    Link = models.CharField("Link",max_length = 200)
     Owner = models.ForeignKey(DAGR, blank = True,null=True)
-
 
 class DAGRCategory(models.Model):
     class Meta():

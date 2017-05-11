@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^reach/(?P<pk>[0-9]+)/$',views.DAGR_Reach,name = 'dagr_reach'),
     url(r'^orphans$',views.DAGR_Sterile,name='dagr_sterile'),
     url(r'^delete/(?P<pk>[0-9]+)/',views.DAGR_Delete,name='delete_page'),
-    url(r'^deleteCon/(?P<pk>[0-9]+)/',views.delete,name='delete_confirm')
+    url(r'^deleteCon/(?P<pk>[0-9]+)/',views.delete,name='delete_confirm'),
+    url(r'^url$', views.url_upload, name='url'),
 ]
