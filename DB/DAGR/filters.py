@@ -6,7 +6,7 @@ class DAGRListFilter(django_filters.FilterSet):
     Name = django_filters.CharFilter(name = 'Name',lookup_expr = ['contains'])
     Author = django_filters.CharFilter(name = 'Author',lookup_expr = ['contains'])
     Size = django_filters.RangeFilter(name = 'Size')
-
+    CategoryID = django_filters.ModelChoiceFilter(queryset = Category.objects.all())
     class Meta:
         model = DAGR
         fields = '__all__'

@@ -55,7 +55,7 @@ class Document(models.Model):
     FileName = models.CharField("File Name",max_length = 50, unique = True)
     Type = models.CharField("Type",max_length = 50)
     Owner = models.ForeignKey(DAGR, blank = True,null=True)
-    Description = models.CharField("Description",max_length = 100)
+    Description = models.CharField("Description",max_length = 100, blank =True, null =True)
 
 
 class URL(models.Model):
@@ -64,7 +64,7 @@ class URL(models.Model):
 
     Name = models.CharField("Name",max_length = 50, blank = True,null=True)
     Type = models.CharField("Type",max_length = 50)
-    Description = models.CharField("Description",max_length = 100)
+    Description = models.CharField("Description",max_length = 100, blank = True,null=True)
     Link = models.CharField("Link",max_length = 200)
     Owner = models.ForeignKey(DAGR, blank = True,null=True)
 

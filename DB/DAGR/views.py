@@ -46,15 +46,20 @@ def model_form_upload(request):
             Type = form.cleaned_data.get('Links').name.split('.')[-1]
             obj.Type = Type
             if not form.cleaned_data.get('Name'):
-                name  = form.cleaned_data.get('Links').name.split('/')[-1].split('.')[0]
+                name  = form.cleaned_data.get('Links').name.split('/')[-1]
             else:
                 name = form.cleaned_data.get('Name')
             obj.Name = name
             obj.FileName = form.cleaned_data.get('Links').name.split('/')[-1]
-            New_DAGR = DAGR(Name = name, Author = form.cleaned_data.get('Author'), \
-            CreationTime = datetime.now(), HasKids = False, Size = obj.Size)
-            New_DAGR.save()
-            obj.Owner = New_DAGR
+            if not obj.Owner:
+                New_DAGR = DAGR(Name = name, Author = form.cleaned_data.get('Author'), \
+                CreationTime = datetime.now(), HasKids = False, Size = obj.Size)
+                New_DAGR.save()
+                obj.Owner = New_DAGR
+            else:
+                d = DAGR.objects.get(pk=obj.Owner.pk)
+                d.Size = d.Size + obj.Size
+                d.save()
             obj.save()
         return HttpResponseRedirect('/DAGR/')
     else:
