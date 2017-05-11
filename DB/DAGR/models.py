@@ -40,8 +40,8 @@ class DAGR(models.Model):
     LastModified = models.DateTimeField("Last Modified", blank = True,null=True)
     DeletionTime = models.DateTimeField("Deletion Time", blank = True,null=True)
     HasKids = models.BooleanField("Has Kids", blank = True)
-    Kids = models.ManyToManyField("self",symmetrical=False,through = 'DAGRChildren',blank=True)
-    CategoryID = models.ManyToManyField(Category,through = "DAGRCategory",blank = True)
+    Kids = models.ManyToManyField("self",symmetrical=False,blank=True)
+    CategoryID = models.ManyToManyField(Category,blank = True)
     Size  = models.IntegerField("Size")
 
 class Document(models.Model):
