@@ -1,4 +1,5 @@
-
+{% extends 'DAGR/sidebar.html' %}
+{%block content%}
 <h2>Add New {{ name }} to the Database</h2><br>
     <form method="POST" class="post-form" id="myform">{% csrf_token %}
         <ul class="list-inline">
@@ -7,5 +8,7 @@
 
         <button type="submit" class="save btn btn-default">Save</button>
        	<a href="{% url 'Category' %}" class='btn btn-default'>Cancel</a>
+        <a href="{% url 'home' %}" class='btn btn-default'>Return Home</a>
 
     </form>
+{%endblock%}

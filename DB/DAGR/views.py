@@ -18,16 +18,8 @@ from django_tables2 import SingleTableView
 from django.views.generic import ListView,TemplateView,UpdateView
 
 
-
 def basic_search(request):
     return render(request, 'DAGR/basic_search.html', {})
-
-def tables(request):
-    DAGR_table = DAGRTable(DAGR.objects.all())
-    RequestConfig(request).configure(DAGR_table)
-
-    return render(request,'DAGR/tables.html',
-        {'DAGR':DAGR_table})
 
 class DAGRListView(TemplateView):
     template_name='DAGR/searchable.html'
@@ -60,7 +52,7 @@ def model_form_upload(request):
             obj.Name = name
             obj.FileName = form.cleaned_data.get('Links').name.split('/')[-1]
             New_DAGR = DAGR(Name = name, Author = form.cleaned_data.get('Author'), \
-            CreationTime = datetime.now(), HasKids = False)
+            CreationTime = datetime.now(), HasKids = False, Size = obj.Size)
             New_DAGR.save()
             obj.Owner = New_DAGR
             obj.save()
@@ -95,8 +87,8 @@ class FileFieldView(FormView):
         if form.is_valid():
             print(form.cleaned_data.get('Author'))
             for f in files:
-                New_DAGR = DAGR(Name = f.name, Author = form.cleaned_data.get('Author'), \
-                CreationTime = datetime.now(), HasKids = False)
+                New_DAGR = DAGR(Name = f.name.split('.')[0], Author = form.cleaned_data.get('Author'), \
+                CreationTime = datetime.now(), HasKids = False, Size = f.size)
                 New_DAGR.save()
                 Type = f.name.split('.')[-1]
                 New_Doc = Document(Name = f, Author = form.cleaned_data.get('Author'),\
@@ -107,6 +99,66 @@ class FileFieldView(FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+def reach_help(pk,arr):
+
+    DAGRs = DAGR.objects.get(pk=pk)
+    for kid in DAGRs.Kids.all():
+        arr.append(kid)
+        reach_help(kid.pk,arr)
+    return arr
+
+def DAGR_Reach(request,pk):
+    arr = []
+    reach_help(pk,arr)
+    context = {
+        'kids' : arr
+    }
+    return render(request,'DAGR/reach.html',context)
+
+def DAGR_Sterile(request):
+    arr =[]
+    D = DAGR.objects.all()
+    for da in D:
+        if DAGRChildren.objects.filter(Parent=da.pk) or DAGRChildren.objects.filter(Children = da.pk):
+            print(da.pk)
+        else:
+            arr.append(da)
+            print(DAGRChildren.objects.filter(Parent=da.pk))
+            print(da.pk)
+            print("test")
+        print(arr)
+    context = {
+        'kids':arr
+    }
+    return render(request,'DAGR/reach.html',context)
+
+def DAGR_Delete(request,pk):
+    arr = []
+    reach_help(pk,arr)
+    D = DAGR.objects.get(pk=pk)
+    context = {
+        'kids' : arr,
+        'object' : D
+    }
+    return render(request,'DAGR/delete.html',context)
+
+def delete(request, pk):
+    arr =[]
+    arr.append(DAGR.objects.get(pk=pk))
+    reach_help(pk,arr)
+    print(arr)
+    for kids in arr:
+        D = DAGR.objects.get(pk=kids.pk)
+        D.DeletionTime = datetime.now()
+        DAGRChildren.objects.filter(Parent=kids.pk).delete()
+        DAGRChildren.objects.filter(Children = kids.pk).delete()
+        DAGRCategory.objects.filter(DAGRID=kids.pk).delete()
+        Doc = Document.objects.get(Owner = kids.pk)
+        Doc.Owner = None
+        Doc.save()
+        D.save()
+    return HttpResponseRedirect('/DAGR/')
 
 def add_cat(request):
     form = CategoryForm(request.POST or None);
@@ -119,7 +171,6 @@ def add_cat(request):
         form.save()
         return HttpResponseRedirect('/DAGR/')
 
-
     return render(request, 'DAGR/add_new.html', context)
 
 class DAGR_Detailview(generic.DetailView):
@@ -128,4 +179,18 @@ class DAGR_Detailview(generic.DetailView):
 
 class DAGR_Update(UpdateView):
     model = DAGR
-    fields = ['Name','Author','Kids']
+    fields = ['Name','Author','Kids','CategoryID']
+
+    def form_valid(self,form):
+        print(form.instance.Kids.all())
+        form.instance.LastModified = datetime.now()
+        kids = form.instance.Kids.all()
+        if kids:
+            for temp in kids:
+                docSize = Document.objects.get(Owner = temp.pk).Size
+                print(docSize)
+                form.instance.Size = form.instance.Size + docSize
+            form.instance.HasKids = True
+
+        redirect_url = super(DAGR_Update, self).form_valid(form)
+        return redirect_url

@@ -31,8 +31,9 @@ class DAGRListFormHelper(FormHelper):
                     InlineField('Name'),
                     InlineField('Author'),
                     'HasKids',
-                    'CreationTime',
-                    #'date_between',
+                    'CategoryID',
+                    'Size',
+                    'date_between',
 
                 ),
                 #'resource_first_name',

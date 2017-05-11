@@ -1,0 +1,22 @@
+{% extends 'DAGR/sidebar.html' %}
+{%block content%}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure this will delete '+"{{object.Name}}" + ' and all its children');
+})
+</script>
+This will delete {{object.Name}}
+
+{%for kid in kids%}
+  <ul>
+  <li> {{kid.Name}}</li>
+</ul>
+{%endfor%}
+<br>
+Are you sure?<br>
+<a href="{%url 'delete_confirm' pk=object.pk%}" class="confirm-delete btn btn-default">Yes</a>
+<a href="{%url 'home'%}" class="btn btn-default">No</a>
+
+{%endblock%}
